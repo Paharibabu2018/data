@@ -218,13 +218,6 @@ $(document).ready(function () {
         $('#total-price').text(total.toFixed(2));
     }
 
-    // Update template display
-    function updateTemplateDisplay(templateName, price) {
-        $('#template-summary').text(templateName || 'None');
-        $('#template-price-summary').text(price.toFixed(2));
-        $('#selected-template').toggleClass('hidden', !templateName);
-    }
-
     // Get URL parameter
     function getParameterByName(name) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -233,10 +226,16 @@ $(document).ready(function () {
 
     // Template selection
     $('#template-selection').change(function () {
-        const selectedOption = $(this).find('option:selected');
+        const selectedOption = $('#template-selection option:selected');
         templatePrice = parseFloat(selectedOption.data('price')) || 0;
         const selectedTemplate = selectedOption.text();
-        updateTemplateDisplay(selectedTemplate, templatePrice);
+
+        // Update the template section
+        $('#template-summary').text(selectedTemplate);
+        $('#summary-template').text(selectedTemplate);
+        $('#template-price-summary').text(templatePrice.toFixed(2));
+        $('#summary-template-price').text(templatePrice.toFixed(2));
+        $('#selected-template').removeClass('hidden');
         updateTotalPrice();
     });
 
@@ -246,20 +245,6 @@ $(document).ready(function () {
         $('#template-selection').val(templateFromUrl).change();
     }
 
-// Template selection
-$('#template-selection').change(function () {
-    const selectedOption = $('#template-selection option:selected');
-    templatePrice = parseFloat(selectedOption.data('price')) || 0;
-    const selectedTemplate = selectedOption.text();
-
-    // Update the template section
-    $('#template-summary').text(selectedTemplate);
-    $('#summary-template').text(selectedTemplate);
-    $('#template-price-summary').text(templatePrice.toFixed(2));
-    $('#summary-template-price').text(templatePrice.toFixed(2));
-    $('#selected-template').removeClass('hidden');
-    updateTotalPrice();
-});
     // Tabs switching between domain search and manual
     $('#tab-search, #tab-manual').click(function () {
         const isSearchTab = this.id === 'tab-search';
@@ -373,6 +358,7 @@ Total Price: $${totalPrice}
 Payment Method: ${paymentMethod}`);
     });
 });
+
 
 
 </script>
