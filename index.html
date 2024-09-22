@@ -169,11 +169,6 @@
                     <td class="py-2 text-right"></td>
                     <td class="py-2 text-right">$<span id="summary-addons-price">0</span></td>
                 </tr>
-                <tr>
-                    <td class="py-2 font-semibold">Order Period: <span id="summary-order-period">1 Year</span></td>
-                    <td class="py-2 text-right"></td>
-                    <td class="py-2 text-right">$<span id="summary-order-price">0</span></td>
-                </tr>
                 <tr class="font-bold">
                     <td class="py-2">Total Price:</td>
                     <td class="py-2 text-right"></td>
@@ -181,221 +176,121 @@
                 </tr>
             </tbody>
         </table>
+        <button id="confirm-order" class="gradient-btn p-3 rounded-lg mt-4 w-full">Confirm Order</button>
     </section>
-
-    <!-- Section 6: Billing Details -->
-    <section id="billing-details" class="mb-6 section-card">
-        <h2 class="text-xl font-bold mb-4">6. Billing Details</h2>
-        <input type="text" id="full-name" class="input-field mb-4" placeholder="Full Name">
-        <input type="text" id="mobile-number" class="input-field mb-4" placeholder="Mobile Number">
-        <input type="email" id="email-address" class="input-field mb-4" placeholder="Email Address">
-        <p class="mt-4 font-semibold">Select Payment Method:</p>
-        <label class="flex items-center">
-            <input type="radio" name="payment-method" value="Credit Card" class="mr-2"> Credit Card
-        </label>
-        <label class="flex items-center">
-            <input type="radio" name="payment-method" value="PayPal" class="mr-2"> PayPal
-        </label>
-        <label class="flex items-center">
-            <input type="radio" name="payment-method" value="Bank Transfer" class="mr-2"> Bank Transfer
-        </label>
-    </section>
-
-    <!-- Place Order Button -->
-    <button id="place-order" class="gradient-btn w-full p-3 rounded-lg">Place Order</button>
 </div>
 
 <script>
-$(document).ready(function () {
-    let templatePrice = 0;
-    let domainPrice = 0;
-    let orderPeriodMultiplier = 1;
-    let addonsPrice = 0;
+    $(document).ready(function () {
+        let templatePrice = 0;
+        let domainPrice = 0;
+        let addonsPrice = 0;
+        let orderPeriodMultiplier = 1;
 
-    // Function to update the total price
-    function updateTotalPrice() {
-        const total = (templatePrice + domainPrice + addonsPrice) * orderPeriodMultiplier;
-        $('#total-price').text(total.toFixed(2));
-    }
+        // Template Selection
+        $('#template-selection').change(function () {
+            const selectedOption = $(this).find('option:selected');
+            const price = selectedOption.data('price');
+            templatePrice = price;
 
-    // Template selection
-    $('#template-selection').change(function () {
-        const selectedOption = $('#template-selection option:selected');
-        templatePrice = parseFloat(selectedOption.data('price')) || 0;
-        const selectedTemplate = selectedOption.text();
-
-        // Update the template section
-        $('#template-summary').text(selectedTemplate);
-        $('#summary-template').text(selectedTemplate);
-        $('#template-price-summary').text(templatePrice.toFixed(2));
-        $('#summary-template-price').text(templatePrice.toFixed(2));
-        $('#selected-template').removeClass('hidden');
-        updateTotalPrice();
-    });
-
-    // Tabs switching between domain search and manual
-    $('#tab-search').click(function () {
-        $('#tab-search').addClass('bg-orange-500 text-white');
-        $('#tab-manual').removeClass('bg-orange-500 text-white');
-        $('#search-domain-section').show();
-        $('#manual-domain-section').hide();
-    });
-
-    $('#tab-manual').click(function () {
-        $('#tab-manual').addClass('bg-orange-500 text-white');
-        $('#tab-search').removeClass('bg-orange-500 text-white');
-        $('#manual-domain-section').show();
-        $('#search-domain-section').hide();
-    });
-
-    // Domain search functionality
-    $('#search-btn').click(function () {
-        const domain = $('#domain-search').val();
-        const selectedTLD = $('#domain-tld option:selected');
-        domainPrice = parseFloat(selectedTLD.data('price')) || 0;
-
-        $('#searched-domain').text(domain + selectedTLD.val());
-        $('#searched-domain-price').text(domainPrice.toFixed(2));
-        $('#search-result').removeClass('hidden');
-    });
-
-    // Add searched domain
-    $('#add-searched-domain').click(function () {
-        const domain = $('#searched-domain').text();
-        $('#domain-summary').text(domain);
-        $('#summary-domain').text(domain);
-        $('#domain-price-summary').text(domainPrice.toFixed(2));
-        $('#summary-domain-price').text(domainPrice.toFixed(2));
-        $('#selected-domain').removeClass('hidden');
-        updateTotalPrice();
-    });
-
-    // Manually add domain
-    $('#add-manual-domain').click(function () {
-        const manualDomain = $('#manual-domain').val();
-        $('#domain-summary').text(manualDomain);
-        $('#summary-domain').text(manualDomain);
-        $('#domain-price-summary').text('0.00');
-        $('#summary-domain-price').text('0.00');
-        domainPrice = 0;  // No price for manually added domain
-        $('#selected-domain').removeClass('hidden');
-        updateTotalPrice();
-    });
-
-    // Order period selection
-    $('#order-period').change(function () {
-        orderPeriodMultiplier = parseInt($('#order-period option:selected').data('multiplier')) || 1;
-        const selectedOrderPeriod = $('#order-period option:selected').text();
-
-        $('#order-period-summary').text(selectedOrderPeriod);
-        $('#summary-period').text(selectedOrderPeriod);
-        $('#order-period-multiplier').text(orderPeriodMultiplier);
-        $('#summary-period-multiplier').text(orderPeriodMultiplier);
-        $('#selected-order-period').removeClass('hidden');
-        updateTotalPrice();
-    });
-
-    // Add-ons selection
-    $('.addon-checkbox').change(function () {
-        let selectedAddons = [];
-        addonsPrice = 0;
-
-        $('.addon-checkbox:checked').each(function () {
-            selectedAddons.push($(this).val());
-            addonsPrice += parseFloat($(this).data('price')) || 0;
+            $('#template-summary').text(selectedOption.val() || 'None');
+            $('#template-price-summary').text(price || 0);
+            $('#selected-template').toggle(price > 0);
+            updateTotalPrice();
         });
 
-        const addonsSummary = selectedAddons.length ? selectedAddons.join(', ') : 'None';
-        $('#addons-summary').text(addonsSummary);
-        $('#summary-addons').text(addonsSummary);
-        $('#addons-price-summary').text(addonsPrice.toFixed(2));
-        $('#summary-addons-price').text(addonsPrice.toFixed(2));
-        $('#selected-addons').removeClass('hidden');
-        updateTotalPrice();
-    });
+        // Domain Selection - Search
+        $('#search-btn').click(function () {
+            const domainName = $('#domain-search').val();
+            const domainTLD = $('#domain-tld').val();
+            const fullDomain = domainName + domainTLD;
 
-    // Place Order functionality
-    $('#place-order').click(function () {
-        const fullName = $('#full-name').val().trim();
-        const mobileNumber = $('#mobile-number').val().trim();
-        const emailAddress = $('#email-address').val().trim();
-        const template = $('#template-summary').text();
-        const domain = $('#domain-summary').text();
-        const orderPeriod = $('#order-period-summary').text();
-        const addons = $('#addons-summary').text();
-        const totalPrice = $('#total-price').text();
-        
-        // Validate billing details
-        if (!fullName || !mobileNumber || !emailAddress) {
-            alert("Please fill in all billing details.");
-            return;
+            $('#searched-domain').text(fullDomain);
+            const searchedPrice = $('#domain-tld option:selected').data('price');
+            $('#searched-domain-price').text(searchedPrice);
+            $('#search-result').removeClass('hidden');
+        });
+
+        $('#add-searched-domain').click(function () {
+            const fullDomain = $('#searched-domain').text();
+            domainPrice = $('#domain-tld option:selected').data('price');
+
+            $('#domain-summary').text(fullDomain);
+            $('#domain-price-summary').text(domainPrice);
+            $('#selected-domain').removeClass('hidden');
+            $('#search-domain-section').addClass('hidden');
+            updateTotalPrice();
+        });
+
+        // Domain Selection - Manual
+        $('#add-manual-domain').click(function () {
+            const manualDomain = $('#manual-domain').val();
+            const manualDomainPrice = 10; // Set a fixed price for manual domain entries
+
+            $('#domain-summary').text(manualDomain);
+            domainPrice = manualDomainPrice;
+            $('#domain-price-summary').text(manualDomainPrice);
+            $('#selected-domain').removeClass('hidden');
+            $('#manual-domain-section').addClass('hidden');
+            updateTotalPrice();
+        });
+
+        // Toggle Domain Input Sections
+        $('#tab-search').click(function () {
+            $('#search-domain-section').removeClass('hidden');
+            $('#manual-domain-section').addClass('hidden');
+        });
+
+        $('#tab-manual').click(function () {
+            $('#manual-domain-section').removeClass('hidden');
+            $('#search-domain-section').addClass('hidden');
+        });
+
+        // Add-ons Selection
+        $('.addon-checkbox').change(function () {
+            const addonPrice = parseInt($(this).data('price'));
+            if ($(this).is(':checked')) {
+                addonsPrice += addonPrice;
+            } else {
+                addonsPrice -= addonPrice;
+            }
+
+            const selectedAddons = $('.addon-checkbox:checked').map(function () {
+                return $(this).val();
+            }).get();
+
+            $('#addons-summary').text(selectedAddons.length ? selectedAddons.join(', ') : 'None');
+            $('#addons-price-summary').text(addonsPrice);
+            $('#selected-addons').toggle(addonsPrice > 0);
+            updateTotalPrice();
+        });
+
+        // Order Period Selection
+        $('#order-period').change(function () {
+            orderPeriodMultiplier = $(this).find('option:selected').data('multiplier');
+            $('#order-period-summary').text($(this).val() + ' Year(s)');
+            $('#order-period-multiplier').text(orderPeriodMultiplier);
+            updateTotalPrice();
+        });
+
+        // Calculate Total Price
+        function updateTotalPrice() {
+            const total = (templatePrice + domainPrice + addonsPrice) * orderPeriodMultiplier;
+            $('#total-price').text(total);
         }
 
-        // Validate payment method selection
-        const paymentMethod = $('input[name="payment-method"]:checked').val();
-        if (!paymentMethod) {
-            alert("Please select a payment method.");
-            return;
-        }
-
-        // Show order summary
-        alert(`Order Summary:
-Full Name: ${fullName}
-Mobile Number: ${mobileNumber}
-Email Address: ${emailAddress}
-Template: ${template}
-Domain: ${domain}
-Order Period: ${orderPeriod}
-Add-ons: ${addons}
-Total Price: $${totalPrice}
-Payment Method: ${paymentMethod}`);
+        // Confirm Order
+        $('#confirm-order').click(function () {
+            const orderDetails = {
+                template: $('#template-summary').text(),
+                domain: $('#domain-summary').text(),
+                addons: $('#addons-summary').text(),
+                totalPrice: $('#total-price').text()
+            };
+            alert(`Order Confirmed!\nDetails:\nTemplate: ${orderDetails.template}\nDomain: ${orderDetails.domain}\nAdd-ons: ${orderDetails.addons}\nTotal Price: $${orderDetails.totalPrice}`);
+        });
     });
-});
-
 </script>
-
-<script>
-  const templateSelect = document.getElementById('template-selection');
-  const selectedTemplateDiv = document.getElementById('selected-template');
-  const templateSummary = document.getElementById('template-summary');
-  const templatePriceSummary = document.getElementById('template-price-summary');
-
-  // Function to get URL parameter
-  function getParameterByName(name) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(name);
-  }
-
-  // Function to update the template display
-  function updateTemplateDisplay(templateName, templatePrice) {
-    templateSummary.textContent = templateName || 'None';
-    templatePriceSummary.textContent = templatePrice.toFixed(2);
-    selectedTemplateDiv.classList.toggle('hidden', !templateName);
-  }
-
-  // Event listener for template selection change
-  templateSelect.addEventListener('change', function () {
-    const selectedOption = templateSelect.options[templateSelect.selectedIndex];
-    const selectedTemplate = selectedOption.value;
-    const templatePrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
-
-    updateTemplateDisplay(selectedTemplate, templatePrice);
-  });
-
-  // Set the template based on URL parameter
-  const templateFromUrl = getParameterByName('template');
-  if (templateFromUrl) {
-    for (const option of templateSelect.options) {
-      if (option.value === templateFromUrl) {
-        option.selected = true;
-        const templatePrice = parseFloat(option.getAttribute('data-price')) || 0;
-        updateTemplateDisplay(templateFromUrl, templatePrice);
-        break;
-      }
-    }
-  }
-</script>
-
 
 </body>
 </html>
