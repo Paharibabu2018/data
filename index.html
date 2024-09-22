@@ -246,6 +246,20 @@ $(document).ready(function () {
         $('#template-selection').val(templateFromUrl).change();
     }
 
+// Template selection
+$('#template-selection').change(function () {
+    const selectedOption = $('#template-selection option:selected');
+    templatePrice = parseFloat(selectedOption.data('price')) || 0;
+    const selectedTemplate = selectedOption.text();
+
+    // Update the template section
+    $('#template-summary').text(selectedTemplate);
+    $('#summary-template').text(selectedTemplate);
+    $('#template-price-summary').text(templatePrice.toFixed(2));
+    $('#summary-template-price').text(templatePrice.toFixed(2));
+    $('#selected-template').removeClass('hidden');
+    updateTotalPrice();
+});
     // Tabs switching between domain search and manual
     $('#tab-search, #tab-manual').click(function () {
         const isSearchTab = this.id === 'tab-search';
