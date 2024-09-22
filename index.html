@@ -1,51 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        <h2 class="mt-5">Login</h2>
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Email address</label>
-                <input type="email" class="form-control" id="email" placeholder="Enter email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" placeholder="Password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-        </form>
+<!-- Section 1: Choose Your Template -->
+<section id="choose-template" class="mb-6 section-card">
+    <h2 class="text-xl font-bold mb-4">1. Choose Your Template</h2>
+    <select id="template-selection" class="input-field mb-4">
+        <option value="" data-price="0">Select a Template</option>
+        <option value="Template A" data-price="100">Template A ($100)</option>
+        <option value="Template B" data-price="150">Template B ($150)</option>
+        <option value="Template C" data-price="200">Template C ($200)</option>
+    </select>
+    <div id="selected-template" class="hidden">
+        <p class="text-lg font-semibold">Selected Template: <span id="template-summary">None</span></p>
+        <p class="text-lg font-semibold">Template Price: $<span id="template-price-summary">0</span></p>
     </div>
+</section>
 
-    <script type="module">
-        import { auth, db, signInWithEmailAndPassword, doc, setDoc } from './firebase-config.js';
+<script>
+  const templateSelect = document.getElementById('template-selection');
+  const selectedTemplateDiv = document.getElementById('selected-template');
+  const templateSummary = document.getElementById('template-summary');
+  const templatePriceSummary = document.getElementById('template-price-summary');
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+  // Function to get URL parameter
+  function getParameterByName(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+  }
 
-            signInWithEmailAndPassword(auth, email, password)
-                .then(userCredential => {
-                    const user = userCredential.user;
-                    setDoc(doc(db, "users", user.uid), {
-                        email: user.email,
-                        lastLogin: new Date()
-                    }).then(() => {
-                        window.location.href = 'dashboard.html';
-                    }).catch(error => {
-                        console.error("Error adding user to Firestore: ", error);
-                    });
-                })
-                .catch(error => {
-                    alert('Error: ' + error.message);
-                });
-        });
-    </script>
-</body>
-</html>
+  // Function to set the selected template and price
+  function setSelectedTemplate(templateName) {
+    for (let i = 0; i < templateSelect.options.length; i++) {
+      const option = templateSelect.options[i];
+      if (option.value === templateName) {
+        option.selected = true;
+        const templatePrice = option.getAttribute('data-price');
+
+        // Update the template summary and price
+        templateSummary.textContent = templateName;
+        templatePriceSummary.textContent = templatePrice;
+
+        // Show the template summary div if a template is selected
+        selectedTemplateDiv.classList.remove('hidden');
+        return;
+      }
+    }
+  }
+
+  // Event listener for template selection change
+  templateSelect.addEventListener('change', function () {
+    const selectedOption = templateSelect.options[templateSelect.selectedIndex];
+    const selectedTemplate = selectedOption.value;
+    const templatePrice = selectedOption.getAttribute('data-price');
+
+    // Update the template summary and price
+    templateSummary.textContent = selectedTemplate || 'None';
+    templatePriceSummary.textContent = templatePrice || '0';
+
+    // Show the template summary div if a template is selected
+    if (selectedTemplate) {
+      selectedTemplateDiv.classList.remove('hidden');
+    } else {
+      selectedTemplateDiv.classList.add('hidden');
+    }
+  });
+
+  // Set the template based on URL parameter
+  const templateFromUrl = getParameterByName('template');
+  if (templateFromUrl) {
+    setSelectedTemplate(templateFromUrl);
+  }
+</script>
