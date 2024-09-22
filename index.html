@@ -189,16 +189,22 @@
         <input type="text" id="full-name" class="input-field mb-4" placeholder="Full Name">
         <input type="text" id="mobile-number" class="input-field mb-4" placeholder="Mobile Number">
         <input type="email" id="email-address" class="input-field mb-4" placeholder="Email Address">
-        <p class="mt-4 font-semibold">Select Payment Method:</p>
-        <label class="flex items-center">
-            <input type="radio" name="payment-method" value="Credit Card" class="mr-2"> Credit Card
-        </label>
-        <label class="flex items-center">
-            <input type="radio" name="payment-method" value="PayPal" class="mr-2"> PayPal
-        </label>
-        <label class="flex items-center">
-            <input type="radio" name="payment-method" value="Bank Transfer" class="mr-2"> Bank Transfer
-        </label>
+        <p class="mt-4 mb-2 font-semibold">Select Payment Method:</p>
+
+<div class="flex space-x-4">
+    <label class="flex items-center">
+        <input type="radio" name="payment-method" value="Credit Card" class="hidden peer">
+        <span class="inline-block px-4 py-2 bg-gray-300 text-gray-700 rounded-lg cursor-pointer peer-checked:bg-blue-500 peer-checked:text-white">Credit Card</span>
+    </label>
+    <label class="flex items-center">
+        <input type="radio" name="payment-method" value="PayPal" class="hidden peer">
+        <span class="inline-block px-4 py-2 bg-gray-300 text-gray-700 rounded-lg cursor-pointer peer-checked:bg-blue-500 peer-checked:text-white">PayPal Pay</span>
+    </label>
+    <label class="flex items-center">
+        <input type="radio" name="payment-method" value="Bank Transfer" class="hidden peer">
+        <span class="inline-block px-4 py-2 bg-gray-300 text-gray-700 rounded-lg cursor-pointer peer-checked:bg-blue-500 peer-checked:text-white">Bank Transfer</span>
+    </label>
+</div>
     </section>
 
     <!-- Place Order Button -->
