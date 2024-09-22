@@ -1,70 +1,136 @@
-<!-- Section 1: Choose Your Template -->
-<section id="choose-template" class="mb-6 section-card">
-    <h2 class="text-xl font-bold mb-4">1. Choose Your Template</h2>
-    <select id="template-selection" class="input-field mb-4">
-        <option value="" data-price="0">Select a Template</option>
-        <option value="Template A" data-price="100">Template A ($100)</option>
-        <option value="Template B" data-price="150">Template B ($150)</option>
-        <option value="Template C" data-price="200">Template C ($200)</option>
-    </select>
-    <div id="selected-template" class="hidden">
-        <p class="text-lg font-semibold">Selected Template: <span id="template-summary">None</span></p>
-        <p class="text-lg font-semibold">Template Price: $<span id="template-price-summary">0</span></p>
-    </div>
-</section>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Page</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(to right, #f3f4f6, #dbeafe);
+            font-family: 'Poppins', sans-serif;
+        }
+        h1, h2 {
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .gradient-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .gradient-btn:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            transform: scale(1.05);
+        }
+        .section-card {
+            background: white;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.2s;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+        }
+        .input-field {
+            border-radius: 10px;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-field:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
 
-<script>
-  const templateSelect = document.getElementById('template-selection');
-  const selectedTemplateDiv = document.getElementById('selected-template');
-  const templateSummary = document.getElementById('template-summary');
-  const templatePriceSummary = document.getElementById('template-price-summary');
+<div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-8 text-center">Checkout Page</h1>
 
-  // Function to get URL parameter
-  function getParameterByName(name) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(name);
-  }
+    <!-- Section 1: Choose Your Template -->
+    <section id="choose-template" class="mb-6 section-card">
+        <h2 class="text-xl font-bold mb-4">1. Choose Your Template</h2>
+        <select id="template-selection" class="input-field mb-4">
+            <option value="" data-price="0">Select a Template</option>
+            <option value="Template A" data-price="100">Template A ($100)</option>
+            <option value="Template B" data-price="150">Template B ($150)</option>
+            <option value="Template C" data-price="200">Template C ($200)</option>
+        </select>
+        <div id="selected-template" class="hidden">
+            <p class="text-lg font-semibold">Selected Template: <span id="template-summary">None</span></p>
+            <p class="text-lg font-semibold">Template Price: $<span id="template-price-summary">0</span></p>
+        </div>
+    </section>
 
-  // Function to set the selected template and price
-  function setSelectedTemplate(templateName) {
-    for (let i = 0; i < templateSelect.options.length; i++) {
-      const option = templateSelect.options[i];
-      if (option.value === templateName) {
-        option.selected = true;
-        const templatePrice = option.getAttribute('data-price');
+    <!-- Section 2: Domain Selection and other parts -->
 
-        // Update the template summary and price
-        templateSummary.textContent = templateName;
-        templatePriceSummary.textContent = templatePrice;
+    <!-- Javascript -->
+    <script>
+        const templateSelect = document.getElementById('template-selection');
+        const selectedTemplateDiv = document.getElementById('selected-template');
+        const templateSummary = document.getElementById('template-summary');
+        const templatePriceSummary = document.getElementById('template-price-summary');
 
-        // Show the template summary div if a template is selected
-        selectedTemplateDiv.classList.remove('hidden');
-        return;
-      }
-    }
-  }
+        // Function to get URL parameter
+        function getParameterByName(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
 
-  // Event listener for template selection change
-  templateSelect.addEventListener('change', function () {
-    const selectedOption = templateSelect.options[templateSelect.selectedIndex];
-    const selectedTemplate = selectedOption.value;
-    const templatePrice = selectedOption.getAttribute('data-price');
+        // Function to set the selected template and price
+        function setSelectedTemplate(templateName) {
+            for (let i = 0; i < templateSelect.options.length; i++) {
+                const option = templateSelect.options[i];
+                if (option.value === templateName) {
+                    option.selected = true;
+                    const templatePrice = option.getAttribute('data-price');
 
-    // Update the template summary and price
-    templateSummary.textContent = selectedTemplate || 'None';
-    templatePriceSummary.textContent = templatePrice || '0';
+                    // Update the template summary and price
+                    templateSummary.textContent = templateName;
+                    templatePriceSummary.textContent = templatePrice;
 
-    // Show the template summary div if a template is selected
-    if (selectedTemplate) {
-      selectedTemplateDiv.classList.remove('hidden');
-    } else {
-      selectedTemplateDiv.classList.add('hidden');
-    }
-  });
+                    // Show the template summary div if a template is selected
+                    selectedTemplateDiv.classList.remove('hidden');
+                    return;
+                }
+            }
+        }
 
-  // Set the template based on URL parameter
-  const templateFromUrl = getParameterByName('template');
-  if (templateFromUrl) {
-    setSelectedTemplate(templateFromUrl);
-  }
-</script>
+        // Event listener for template selection change
+        templateSelect.addEventListener('change', function () {
+            const selectedOption = templateSelect.options[templateSelect.selectedIndex];
+            const selectedTemplate = selectedOption.value;
+            const templatePrice = selectedOption.getAttribute('data-price');
+
+            // Update the template summary and price
+            templateSummary.textContent = selectedTemplate || 'None';
+            templatePriceSummary.textContent = templatePrice || '0';
+
+            // Show the template summary div if a template is selected
+            if (selectedTemplate) {
+                selectedTemplateDiv.classList.remove('hidden');
+            } else {
+                selectedTemplateDiv.classList.add('hidden');
+            }
+        });
+
+        // Set the template based on URL parameter
+        const templateFromUrl = getParameterByName('template');
+        if (templateFromUrl) {
+            setSelectedTemplate(templateFromUrl);
+        }
+    </script>
+</div>
+
+</body>
+</html>
