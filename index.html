@@ -1,17 +1,358 @@
-<!-- Section 1: Choose Your Template -->
-<section id="choose-template" class="mb-6 section-card">
-    <h2 class="text-xl font-bold mb-4">1. Choose Your Template</h2>
-    <select id="template-selection" class="input-field mb-4">
-        <option value="" data-price="0">Select a Template</option>
-        <option value="Template A" data-price="100">Template A ($100)</option>
-        <option value="Template B" data-price="150">Template B ($150)</option>
-        <option value="Template C" data-price="200">Template C ($200)</option>
-    </select>
-    <div id="selected-template" class="hidden">
-        <p class="text-lg font-semibold">Selected Template: <span id="template-summary">None</span></p>
-        <p class="text-lg font-semibold">Template Price: $<span id="template-price-summary">0</span></p>
-    </div>
-</section>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Page</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(to right, #f3f4f6, #dbeafe);
+            font-family: 'Poppins', sans-serif;
+        }
+        h1, h2 {
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .gradient-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .gradient-btn:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            transform: scale(1.05);
+        }
+        .section-card {
+            background: white;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.2s;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+        }
+        .input-field {
+            border-radius: 10px;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-field:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+<div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-8 text-center">Checkout Page</h1>
+
+    <!-- Section 1: Choose Your Template -->
+    <section id="choose-template" class="mb-6 section-card">
+        <h2 class="text-xl font-bold mb-4">1. Choose Your Template</h2>
+        <select id="template-selection" class="input-field mb-4">
+            <option value="" data-price="0">Select a Template</option>
+            <option value="Template A" data-price="100">Template A ($100)</option>
+            <option value="Template B" data-price="150">Template B ($150)</option>
+            <option value="Template C" data-price="200">Template C ($200)</option>
+        </select>
+        <div id="selected-template" class="hidden">
+            <p class="text-lg font-semibold">Selected Template: <span id="template-summary">None</span></p>
+            <p class="text-lg font-semibold">Template Price: $<span id="template-price-summary">0</span></p>
+        </div>
+    </section>
+
+    <!-- Section 2: Choose Your Domain -->
+    <section id="choose-domain" class="mb-6 section-card">
+        <h2 class="text-xl font-bold mb-4">2. Choose Your Domain</h2>
+        <div class="flex mb-4">
+            <button id="tab-search" class="tab-btn gradient-btn px-4 py-2 rounded-l-lg focus:outline-none">Search Domain</button>
+            <button id="tab-manual" class="tab-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-r-lg focus:outline-none">Add Manually</button>
+        </div>
+
+        <!-- Search Domain Section -->
+        <div id="search-domain-section" class="domain-section mb-4">
+            <div class="flex">
+                <input type="text" id="domain-search" class="input-field rounded-l-lg w-4/5" placeholder="Find your new domain name">
+                <select id="domain-tld" class="input-field rounded-r-lg bg-gray-100 w-1/3">
+                    <option value=".com" data-price="12">.com ($12)</option>
+                    <option value=".net" data-price="10">.net ($10)</option>
+                    <option value=".org" data-price="8">.org ($8)</option>
+                    <option value=".xyz" data-price="5">.xyz ($5)</option>
+                </select>
+            </div>
+            <button id="search-btn" class="gradient-btn p-3 rounded-lg w-full mt-2">Search</button>
+            <div id="search-result" class="mt-4 hidden">
+                <p class="text-lg font-semibold">Domain Available: <span id="searched-domain"></span></p>
+                <p class="text-lg font-semibold">Price: $<span id="searched-domain-price">0</span></p>
+                <button id="add-searched-domain" class="gradient-btn rounded-lg p-3 mt-2">Add to Order</button>
+            </div>
+        </div>
+
+        <!-- Manually Add Domain Section -->
+        <div id="manual-domain-section" class="domain-section hidden mb-4">
+            <input type="text" id="manual-domain" class="input-field" placeholder="Type your domain (e.g., example.com)">
+            <button id="add-manual-domain" class="gradient-btn p-3 rounded-lg mt-2 w-full">Add Manually</button>
+        </div>
+
+        <!-- Selected Domain Section -->
+        <div id="selected-domain" class="mt-4 hidden">
+            <p class="text-lg font-semibold">Selected Domain: <span id="domain-summary">None</span></p>
+            <p class="text-lg font-semibold">Domain Price: $<span id="domain-price-summary">0</span></p>
+        </div>
+    </section>
+    
+    <!-- Section 3: Choose Available Add-ons -->
+    <section id="choose-addons" class="mb-6 section-card">
+        <h2 class="text-xl font-bold mb-4">3. Choose Available Add-ons</h2>
+        <div class="space-y-2">
+            <label class="flex items-center">
+                <input type="checkbox" class="addon-checkbox" value="SSL Certificate" data-price="30">
+                <span class="ml-2">SSL Certificate ($30)</span>
+            </label>
+            <label class="flex items-center">
+                <input type="checkbox" class="addon-checkbox" value="Daily Backup" data-price="20">
+                <span class="ml-2">Daily Backup ($20)</span>
+            </label>
+            <label class="flex items-center">
+                <input type="checkbox" class="addon-checkbox" value="Website Security" data-price="50">
+                <span class="ml-2">Website Security ($50)</span>
+            </label>
+        </div>
+        <div id="selected-addons" class="mt-4 hidden">
+            <p class="text-lg font-semibold">Selected Add-ons: <span id="addons-summary">None</span></p>
+            <p class="text-lg font-semibold">Add-ons Price: $<span id="addons-price-summary">0</span></p>
+        </div>
+    </section>
+
+    <!-- Section 4: Choose Order Period -->
+    <section id="choose-order-period" class="mb-6 section-card">
+        <h2 class="text-xl font-bold mb-4">4. Choose an Order Period</h2>
+        <select id="order-period" class="input-field mb-4">
+            <option value="1" data-multiplier="1">1 Year</option>
+            <option value="2" data-multiplier="2">2 Years</option>
+            <option value="3" data-multiplier="3">3 Years</option>
+        </select>
+        <div id="selected-order-period" class="hidden">
+            <p class="text-lg font-semibold">Selected Order Period: <span id="order-period-summary">1 Year</span></p>
+            <p class="text-lg font-semibold">Order Period Multiplier: <span id="order-period-multiplier">1</span></p>
+        </div>
+    </section>
+
+    <!-- Section 5: Order Summary -->
+    <section id="order-summary" class="mb-6 section-card">
+        <h2 class="text-xl font-bold mb-4">5. Order Summary</h2>
+        <table class="w-full">
+            <tbody>
+                <tr>
+                    <td class="py-2 text-left font-semibold">Template: <span id="summary-template"> </span></td>
+                    <td class="py-2 text-right"></td>
+                    <td class="py-2 text-right">$<span id="summary-template-price">0</span></td>
+                </tr>
+                <tr>
+                    <td class="py-2 font-semibold">Domain: <span id="summary-domain">None</span></td>
+                    <td class="py-2 text-right"></td>
+                    <td class="py-2 text-right">$<span id="summary-domain-price">0</span></td>
+                </tr>
+                <tr>
+                    <td class="py-2 font-semibold">Add-ons: <span id="summary-addons">None</span></td>
+                    <td class="py-2 text-right"></td>
+                    <td class="py-2 text-right">$<span id="summary-addons-price">0</span></td>
+                </tr>
+                <tr>
+                    <td class="py-2 font-semibold">Order Period: <span id="summary-order-period">1 Year</span></td>
+                    <td class="py-2 text-right"></td>
+                    <td class="py-2 text-right">$<span id="summary-order-price">0</span></td>
+                </tr>
+                <tr class="font-bold">
+                    <td class="py-2">Total Price:</td>
+                    <td class="py-2 text-right"></td>
+                    <td class="py-2 text-right">$<span id="total-price">0</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Section 6: Billing Details -->
+    <section id="billing-details" class="mb-6 section-card">
+        <h2 class="text-xl font-bold mb-4">6. Billing Details</h2>
+        <input type="text" id="full-name" class="input-field mb-4" placeholder="Full Name">
+        <input type="text" id="mobile-number" class="input-field mb-4" placeholder="Mobile Number">
+        <input type="email" id="email-address" class="input-field mb-4" placeholder="Email Address">
+        <p class="mt-4 font-semibold">Select Payment Method:</p>
+        <label class="flex items-center">
+            <input type="radio" name="payment-method" value="Credit Card" class="mr-2"> Credit Card
+        </label>
+        <label class="flex items-center">
+            <input type="radio" name="payment-method" value="PayPal" class="mr-2"> PayPal
+        </label>
+        <label class="flex items-center">
+            <input type="radio" name="payment-method" value="Bank Transfer" class="mr-2"> Bank Transfer
+        </label>
+    </section>
+
+    <!-- Place Order Button -->
+    <button id="place-order" class="gradient-btn w-full p-3 rounded-lg">Place Order</button>
+</div>
+
+<script>
+$(document).ready(function () {
+    let templatePrice = 0;
+    let domainPrice = 0;
+    let orderPeriodMultiplier = 1;
+    let addonsPrice = 0;
+
+    // Function to update the total price
+    function updateTotalPrice() {
+        const total = (templatePrice + domainPrice + addonsPrice) * orderPeriodMultiplier;
+        $('#total-price').text(total.toFixed(2));
+    }
+
+    // Template selection
+    $('#template-selection').change(function () {
+        const selectedOption = $('#template-selection option:selected');
+        templatePrice = parseFloat(selectedOption.data('price')) || 0;
+        const selectedTemplate = selectedOption.text();
+
+        // Update the template section
+        $('#template-summary').text(selectedTemplate);
+        $('#summary-template').text(selectedTemplate);
+        $('#template-price-summary').text(templatePrice.toFixed(2));
+        $('#summary-template-price').text(templatePrice.toFixed(2));
+        $('#selected-template').removeClass('hidden');
+        updateTotalPrice();
+    });
+
+    // Tabs switching between domain search and manual
+    $('#tab-search').click(function () {
+        $('#tab-search').addClass('bg-orange-500 text-white');
+        $('#tab-manual').removeClass('bg-orange-500 text-white');
+        $('#search-domain-section').show();
+        $('#manual-domain-section').hide();
+    });
+
+    $('#tab-manual').click(function () {
+        $('#tab-manual').addClass('bg-orange-500 text-white');
+        $('#tab-search').removeClass('bg-orange-500 text-white');
+        $('#manual-domain-section').show();
+        $('#search-domain-section').hide();
+    });
+
+    // Domain search functionality
+    $('#search-btn').click(function () {
+        const domain = $('#domain-search').val();
+        const selectedTLD = $('#domain-tld option:selected');
+        domainPrice = parseFloat(selectedTLD.data('price')) || 0;
+
+        $('#searched-domain').text(domain + selectedTLD.val());
+        $('#searched-domain-price').text(domainPrice.toFixed(2));
+        $('#search-result').removeClass('hidden');
+    });
+
+    // Add searched domain
+    $('#add-searched-domain').click(function () {
+        const domain = $('#searched-domain').text();
+        $('#domain-summary').text(domain);
+        $('#summary-domain').text(domain);
+        $('#domain-price-summary').text(domainPrice.toFixed(2));
+        $('#summary-domain-price').text(domainPrice.toFixed(2));
+        $('#selected-domain').removeClass('hidden');
+        updateTotalPrice();
+    });
+
+    // Manually add domain
+    $('#add-manual-domain').click(function () {
+        const manualDomain = $('#manual-domain').val();
+        $('#domain-summary').text(manualDomain);
+        $('#summary-domain').text(manualDomain);
+        $('#domain-price-summary').text('0.00');
+        $('#summary-domain-price').text('0.00');
+        domainPrice = 0;  // No price for manually added domain
+        $('#selected-domain').removeClass('hidden');
+        updateTotalPrice();
+    });
+
+    // Order period selection
+    $('#order-period').change(function () {
+        orderPeriodMultiplier = parseInt($('#order-period option:selected').data('multiplier')) || 1;
+        const selectedOrderPeriod = $('#order-period option:selected').text();
+
+        $('#order-period-summary').text(selectedOrderPeriod);
+        $('#summary-period').text(selectedOrderPeriod);
+        $('#order-period-multiplier').text(orderPeriodMultiplier);
+        $('#summary-period-multiplier').text(orderPeriodMultiplier);
+        $('#selected-order-period').removeClass('hidden');
+        updateTotalPrice();
+    });
+
+    // Add-ons selection
+    $('.addon-checkbox').change(function () {
+        let selectedAddons = [];
+        addonsPrice = 0;
+
+        $('.addon-checkbox:checked').each(function () {
+            selectedAddons.push($(this).val());
+            addonsPrice += parseFloat($(this).data('price')) || 0;
+        });
+
+        const addonsSummary = selectedAddons.length ? selectedAddons.join(', ') : 'None';
+        $('#addons-summary').text(addonsSummary);
+        $('#summary-addons').text(addonsSummary);
+        $('#addons-price-summary').text(addonsPrice.toFixed(2));
+        $('#summary-addons-price').text(addonsPrice.toFixed(2));
+        $('#selected-addons').removeClass('hidden');
+        updateTotalPrice();
+    });
+
+    // Place Order functionality
+    $('#place-order').click(function () {
+        const fullName = $('#full-name').val().trim();
+        const mobileNumber = $('#mobile-number').val().trim();
+        const emailAddress = $('#email-address').val().trim();
+        const template = $('#template-summary').text();
+        const domain = $('#domain-summary').text();
+        const orderPeriod = $('#order-period-summary').text();
+        const addons = $('#addons-summary').text();
+        const totalPrice = $('#total-price').text();
+        
+        // Validate billing details
+        if (!fullName || !mobileNumber || !emailAddress) {
+            alert("Please fill in all billing details.");
+            return;
+        }
+
+        // Validate payment method selection
+        const paymentMethod = $('input[name="payment-method"]:checked').val();
+        if (!paymentMethod) {
+            alert("Please select a payment method.");
+            return;
+        }
+
+        // Show order summary
+        alert(`Order Summary:
+Full Name: ${fullName}
+Mobile Number: ${mobileNumber}
+Email Address: ${emailAddress}
+Template: ${template}
+Domain: ${domain}
+Order Period: ${orderPeriod}
+Add-ons: ${addons}
+Total Price: $${totalPrice}
+Payment Method: ${paymentMethod}`);
+    });
+});
+
+</script>
 
 <script>
   const templateSelect = document.getElementById('template-selection');
@@ -25,46 +366,36 @@
     return urlParams.get(name);
   }
 
-  // Function to set the selected template and price
-  function setSelectedTemplate(templateName) {
-    for (let i = 0; i < templateSelect.options.length; i++) {
-      const option = templateSelect.options[i];
-      if (option.value === templateName) {
-        option.selected = true;
-        const templatePrice = option.getAttribute('data-price');
-
-        // Update the template summary and price
-        templateSummary.textContent = templateName;
-        templatePriceSummary.textContent = templatePrice;
-
-        // Show the template summary div if a template is selected
-        selectedTemplateDiv.classList.remove('hidden');
-        return;
-      }
-    }
+  // Function to update the template display
+  function updateTemplateDisplay(templateName, templatePrice) {
+    templateSummary.textContent = templateName || 'None';
+    templatePriceSummary.textContent = templatePrice.toFixed(2);
+    selectedTemplateDiv.classList.toggle('hidden', !templateName);
   }
 
   // Event listener for template selection change
   templateSelect.addEventListener('change', function () {
     const selectedOption = templateSelect.options[templateSelect.selectedIndex];
     const selectedTemplate = selectedOption.value;
-    const templatePrice = selectedOption.getAttribute('data-price');
+    const templatePrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
 
-    // Update the template summary and price
-    templateSummary.textContent = selectedTemplate || 'None';
-    templatePriceSummary.textContent = templatePrice || '0';
-
-    // Show the template summary div if a template is selected
-    if (selectedTemplate) {
-      selectedTemplateDiv.classList.remove('hidden');
-    } else {
-      selectedTemplateDiv.classList.add('hidden');
-    }
+    updateTemplateDisplay(selectedTemplate, templatePrice);
   });
 
   // Set the template based on URL parameter
   const templateFromUrl = getParameterByName('template');
   if (templateFromUrl) {
-    setSelectedTemplate(templateFromUrl);
+    for (const option of templateSelect.options) {
+      if (option.value === templateFromUrl) {
+        option.selected = true;
+        const templatePrice = parseFloat(option.getAttribute('data-price')) || 0;
+        updateTemplateDisplay(templateFromUrl, templatePrice);
+        break;
+      }
+    }
   }
 </script>
+
+
+</body>
+</html>
